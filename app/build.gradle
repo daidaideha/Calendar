@@ -16,17 +16,6 @@ android {
         enabled = true
     }
 
-    buildTypes {
-        debug {
-            resValue "string", "app_name", "加班打卡Debug"
-        }
-        release {
-            resValue "string", "app_name", "加班打卡"
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -40,6 +29,34 @@ android {
             storePassword properties.get('key.store.password')
             keyAlias properties.get('key.alias')
             keyPassword properties.get('key.alias.password')
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            signingConfig signingConfigs.debug
+            resValue "string", "app_name", "加班打卡Debug"
+
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled false
+            minifyEnabled false
+            shrinkResources false
+        }
+        release {
+            debuggable false
+            signingConfig signingConfigs.release
+            resValue "string", "app_name", "加班打卡"
+
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
