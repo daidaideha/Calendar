@@ -7,10 +7,10 @@ import de.greenrobot.daogenerator.Schema;
 public class MyDaoGenerator {
 
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(1, "com.lyl.calendar");
+        Schema schema = new Schema(1, "com.lyl.calendar.dao");
 
         addOverTime(schema);
-        new DaoGenerator().generateAll(schema, "../Calendar/app/src/main/java-gen");
+        new DaoGenerator().generateAll(schema, "../Calendar/app/src/main/java");
     }
 
     private static void addOverTime(Schema schema) {
@@ -23,7 +23,8 @@ public class MyDaoGenerator {
         // 接下来你便可以设置表中的字段：
         overTime.addIdProperty();
         overTime.addIntProperty("count").notNull();
-        overTime.addStringProperty("cur_month").notNull();
+        overTime.addIntProperty("job").notNull();
+        overTime.addStringProperty("curMonth").notNull();
         // 与在 Java 中使用驼峰命名法不同，默认数据库中的命名是使用大写和下划线来分割单词的。
         // For example, a property called “creationDate” will become a database column “CREATION_DATE”.
         overTime.addDateProperty("startTime");

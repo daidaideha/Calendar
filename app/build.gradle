@@ -11,6 +11,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    dataBinding {
+        enabled = true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -29,11 +34,12 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    testCompile 'junit:junit:4.12'
     // 日历
-    compile 'com.squareup:android-times-square:1.6.5@aar'
     // 时间选择控件
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.squareup:android-times-square:1.6.5@aar'
     compile 'cn.aigestudio.wheelpicker:WheelPicker:1.1.1'
     compile 'de.greenrobot:greendao:2.1.0'
+    compile 'com.android.support:design:24.1.1'
+    testCompile 'junit:junit:4.12'
 }

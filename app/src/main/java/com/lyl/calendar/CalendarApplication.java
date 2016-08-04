@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.lyl.calendar.dao.DaoMaster;
+import com.lyl.calendar.dao.DaoSession;
+
 /**
  * Created by lyl on 2016/8/3.
  */
@@ -13,6 +16,7 @@ public class CalendarApplication extends Application {
     private static CalendarApplication mInstance = null;
     private SQLiteDatabase mDb;
     private DaoSession mDaoSession;
+    private int mCurPayPrice;
 
     public static CalendarApplication getInstance() {
         return mInstance;
@@ -42,6 +46,14 @@ public class CalendarApplication extends Application {
 
     public SQLiteDatabase getDb() {
         return mDb;
+    }
+
+    public int getCurPayPrice() {
+        return mCurPayPrice;
+    }
+
+    public void setCurPayPrice(int curPayPrice) {
+        this.mCurPayPrice = curPayPrice;
     }
 
     public int getVersionCode() {
