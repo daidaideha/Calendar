@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.lyl.calendar.R;
+import com.lyl.calendar.utils.ToastHelper;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -21,6 +22,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawer;
 
     private FragmentManager mFragmentManager;
+    // 两次返回 退出 时间记录
+    private long mExitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,18 +60,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            exit();
         }
     }
 
     private void showCurrentFragment() {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.replace(R.id.content_home, new CurrentFragment(), CurrentFragment.TAG);
-        transaction.setCustomAnimations(
-                R.anim.fragment_slide_right_enter,
-                R.anim.fragment_slide_left_exit,
-                R.anim.fragment_slide_left_enter,
-                R.anim.fragment_slide_right_exit);
         if (isFinishing())
             return;
         transaction.commit();
@@ -77,11 +75,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void showHistoryFragment() {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.replace(R.id.content_home, new HistoryFragment(), HistoryFragment.TAG);
-        transaction.setCustomAnimations(
-                R.anim.fragment_slide_right_enter,
-                R.anim.fragment_slide_left_exit,
-                R.anim.fragment_slide_left_enter,
-                R.anim.fragment_slide_right_exit);
         if (isFinishing())
             return;
         transaction.commit();
@@ -107,5 +100,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void exit() {
+        if (System.currentTimeMillis() - mExitTime > 2000) {
+            ToastHelper.showLong("再按一次退出程序");
+            mExitTime = System.currentTimeMillis();
+        } else {
+            HomeActivity.this.finish();
+            System.exit(0);
+        }
     }
 }
