@@ -16,15 +16,18 @@ import android.widget.Toast;
 import com.lyl.calendar.CalendarApplication;
 import com.lyl.calendar.Current;
 import com.lyl.calendar.R;
+import com.lyl.calendar.SampleDecorator;
 import com.lyl.calendar.dao.OverTime;
 import com.lyl.calendar.dao.OverTimeDao;
 import com.lyl.calendar.dao.Performance;
 import com.lyl.calendar.utils.DateUtils;
+import com.lyl.calendar.widget.calendar.CalendarCellDecorator;
 import com.lyl.calendar.widget.calendar.CalendarPickerView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -39,8 +42,6 @@ import de.greenrobot.dao.query.QueryBuilder;
 public class CurrentFragment extends Fragment {
 
     public static final String TAG = CurrentFragment.class.getSimpleName();
-
-    private CalendarPickerView mCalendar;
 
     private int mStartHour, mStartMin, mEndHour, mEndMin;
     private Collection<Date> mSelectDate;
@@ -74,27 +75,32 @@ public class CurrentFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mCalendar = (CalendarPickerView) view.findViewById(R.id.calendar_view);
 
         Calendar nextMonth = Calendar.getInstance();
         nextMonth.set(Calendar.DAY_OF_MONTH, 1);
         Date minDate = nextMonth.getTime();
         nextMonth.set(Calendar.DAY_OF_MONTH, nextMonth.getActualMaximum(Calendar.DAY_OF_MONTH));
+        nextMonth.add(Calendar.DAY_OF_MONTH, 1);
         Date maxDate = nextMonth.getTime();
 
         Date today = new Date();
-        mCalendar.init(minDate, maxDate).withSelectedDate(today);
+        mBinding.calendarView.init(minDate, maxDate).withSelectedDate(today);
+        mBinding.calendarView.setDecorators(Collections.<CalendarCellDecorator>singletonList(new SampleDecorator()));
 
-        mCalendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
+        mBinding.calendarView.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
             @Override
             public void onDateSelected(Date date) {
+                if (date.getTime() > new Date().getTime()) {
+                    return;
+                }
                 if (mSelectDate.contains(date)) {
                     showAddCountDialog(date, 1);
                 } else {
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(date);
-                    if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-                        showTimeDialog(0, date);
+                    if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
+                            || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                        showTimeDialog(date, 0);
                     } else {
                         showAddCountDialog(date, 0);
                     }
@@ -107,7 +113,7 @@ public class CurrentFragment extends Fragment {
             }
         });
 
-        mCalendar.highlightDates(mSelectDate);
+        mBinding.calendarView.highlightDates(mSelectDate);
     }
 
     private void showAddCountDialog(final Date date, final int type) {
@@ -130,15 +136,15 @@ public class CurrentFragment extends Fragment {
                             mSelectDate.remove(date);
                             delete(date);
                         }
-                        mCalendar.clearHighlightedDates();
-                        mCalendar.highlightDates(mSelectDate);
+                        mBinding.calendarView.clearHighlightedDates();
+                        mBinding.calendarView.highlightDates(mSelectDate);
                     }
                 })
                 .show();
     }
 
     @SuppressWarnings("deprecation")
-    private void showTimeDialog(final int type, final Date date) {
+    private void showTimeDialog(final Date date, final int type) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final TimePicker timePicker = new TimePicker(getActivity());
         builder.setTitle(type == 0 ? "请选择开始时间" : "请选择结束时间");
@@ -154,12 +160,16 @@ public class CurrentFragment extends Fragment {
                     mEndMin = timePicker.getCurrentMinute();
                 }
                 if (type == 0) {
-                    showTimeDialog(1, date);
+                    showTimeDialog(date, 1);
                 } else {
+                    if (date.getTime() > new Date().getTime()) {
+                        Toast.makeText(getActivity(), "请不要超越时空>*_*<", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     int count = (mEndHour * 60 + mEndMin - (mStartHour * 60 + mStartMin)) / 120;
-                    mCurrent.setAddCount(mCurrent.getAddCount() + 1);
+                    mCurrent.setAddCount(mCurrent.getAddCount() + count);
                     mSelectDate.add(date);
-                    mCalendar.highlightDates(mSelectDate);
+                    mBinding.calendarView.highlightDates(mSelectDate);
                     insert(date, DateUtils.getHHmm(mStartHour, mStartMin), DateUtils.getHHmm(mEndHour, mEndMin), count);
                 }
             }

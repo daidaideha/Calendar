@@ -39,7 +39,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void initTitle() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("123");
         setSupportActionBar(mToolbar);
     }
 
@@ -65,6 +64,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showCurrentFragment() {
+        mToolbar.setTitle("本月签到");
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.replace(R.id.content_home, new CurrentFragment(), CurrentFragment.TAG);
         if (isFinishing())
@@ -73,6 +73,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showHistoryFragment() {
+        mToolbar.setTitle("历史签到");
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.replace(R.id.content_home, new HistoryFragment(), HistoryFragment.TAG);
         if (isFinishing())

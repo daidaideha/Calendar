@@ -8,7 +8,7 @@
 
     <string name="day_name_format">EEE</string>
     <string name="invalid_date">Date must be between %1$s and %2$s.</string>
-    <string name="month_name_format">MMMM yyyy</string>
+    <string name="month_name_format">yyyy年MM月</string>
 
     <string name="add_count">加班次数：%1$d</string>
     <string name="performance_job">当前岗位绩效：%1$d</string>
